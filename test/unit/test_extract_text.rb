@@ -54,4 +54,9 @@ class ExtractTextTest < Test::Unit::TestCase
     assert Dir["#{OUTPUT}/*.txt"].length == 2
   end
 
+  def test_passing_options_to_pdf
+    Docsplit.extract_text('test/fixtures/obama_arts.pdf', :pages => 'all', :output => OUTPUT, :command_options => '-layout')
+    assert Dir["#{OUTPUT}/*.txt"].length == 2
+  end
+
 end

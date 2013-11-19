@@ -103,14 +103,14 @@ module Docsplit
     # Extract the full contents of a pdf as a single file, directly.
     def extract_full(pdf)
       text_path = File.join(@output, "#{@pdf_name}.txt")
-      run "pdftotext -enc UTF-8 #{ESCAPE[pdf]} #{ESCAPE[text_path]} 2>&1"
+      run "#{command} #{ESCAPE[pdf]} #{ESCAPE[text_path]} 2>&1"
     end
 
     # Extract the contents of a single page of text, directly, adding it to
     # the `@pages_to_ocr` list if the text length is inadequate.
     def extract_page(pdf, page)
       text_path = File.join(@output, "#{@pdf_name}_#{page}.txt")
-      run "pdftotext -enc UTF-8 -f #{page} -l #{page} #{ESCAPE[pdf]} #{ESCAPE[text_path]} 2>&1"
+      run "#{command} -f #{page} -l #{page} #{ESCAPE[pdf]} #{ESCAPE[text_path]} 2>&1"
       unless @forbid_ocr
         @pages_to_ocr.push(page) if File.read(text_path).length < MIN_TEXT_PER_PAGE
       end
@@ -123,6 +123,11 @@ module Docsplit
       @forbid_ocr = options[:ocr] == false
       @clean_ocr  = !(options[:clean] == false)
       @language   = options[:language] || 'eng'
+      @command_options = options[:command_options]
+    end
+
+    def command
+      "pdftotext -enc UTF-8 #{@command_options}"
     end
 
   end
